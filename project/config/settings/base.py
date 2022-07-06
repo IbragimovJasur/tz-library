@@ -1,4 +1,12 @@
 
+PROJECT_APPS = [
+    'apps.users',
+]
+
+EXTERNAL_PACKAGES = [
+
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -6,7 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+] + PROJECT_APPS + EXTERNAL_PACKAGES
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -63,3 +71,5 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.BaseUser'
