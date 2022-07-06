@@ -5,7 +5,10 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.users.managers import CustomBaseUserManager
-from apps.users.utils import get_user_photo_upload_path
+from apps.users.utils import (
+    get_client_photo_upload_path,
+    get_author_photo_upload_path,
+)
 
 
 class BaseUser(AbstractBaseUser, PermissionsMixin):
@@ -26,12 +29,6 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
         validators=[username_validator],
     )
     full_name = models.CharField(verbose_name=_("Full Name"), max_length=150)
-    photo = models.ImageField(
-        verbose_name=_("Profile Photo"),
-        upload_to=get_user_photo_upload_path,
-        null=True,
-        blank=True
-    )
     date_joined = models.DateTimeField(auto_now_add=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -57,6 +54,12 @@ class Client(models.Model):
         related_name="clients",
         related_query_name="client"
     )
+    photo = models.ImageField(
+        verbose_name=_("Profile Photo"),
+        upload_to=get_client_photo_upload_path,
+        null=True,
+        blank=True
+    )
     birthday = models.DateField(
         verbose_name=_("Birthday"), 
         null=True, 
@@ -77,6 +80,10 @@ class Author(models.Model):
         on_delete=models.CASCADE,
         related_name="authors",
         related_query_name="author"   
+    )
+    photo = models.ImageField(
+        verbose_name=_("Profile Photo"),
+        upload_to=get_author_photo_upload_path
     )
     country = models.CharField(
         verbose_name=_("Where are you from?"),
