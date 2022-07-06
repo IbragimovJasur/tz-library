@@ -1,6 +1,7 @@
 
 PROJECT_APPS = [
     'apps.users',
+    'apps.books',
 ]
 
 EXTERNAL_PACKAGES = [

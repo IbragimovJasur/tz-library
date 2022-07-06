@@ -45,14 +45,13 @@ class BaseUser(AbstractBaseUser, PermissionsMixin):
 
 
 class Client(models.Model):
-    """Client is regular user who can borrow and read books from library"""
+    """Client is a regular user who can borrow and read books from library"""
 
     user = models.OneToOneField(
         verbose_name=_("Base User"),
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="clients",
-        related_query_name="client"
+        related_name="client"
     )
     photo = models.ImageField(
         verbose_name=_("Profile Photo"),
@@ -74,12 +73,16 @@ class Client(models.Model):
 
 
 class Author(models.Model):
+    """
+    Author is a regular user who can upload books and modify 
+    those that he/she uploaded
+    """
+
     user = models.OneToOneField(
         verbose_name=_("Base User"),
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="authors",
-        related_query_name="author"   
+        related_name="author"   
     )
     photo = models.ImageField(
         verbose_name=_("Profile Photo"),
