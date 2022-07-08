@@ -29,6 +29,6 @@ def get_author_photo_upload_path(instance, filename):
 
 
 def remove_base_user_related_inputs(validated_data: dict) -> dict:
-    """For deleting base user related inputs from validated data"""
-    validated_data_without_base_user_fields = validated_data.pop("user")
-    return validated_data_without_base_user_fields
+    """For deleting base user field related inputs from validated data"""
+    validated_data.pop("user")
+    return validated_data
