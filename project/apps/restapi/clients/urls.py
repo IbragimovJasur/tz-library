@@ -5,8 +5,9 @@ from rest_framework.routers import SimpleRouter
 
 from apps.restapi.clients.routers import ClientUserProfileRouter
 from apps.restapi.clients.views import (
-    ClientUserProfileView,
-    BookModelView,
+    ClientUserProfileViewSet,
+    BookViewSet,
+    BorrowedBookViewSet,
 )
 
 
@@ -16,9 +17,12 @@ default_router = SimpleRouter()
 
 # registering routes
 client_user_profile_router.register(
-    "profile", ClientUserProfileView, basename="profile"
+    "profile", ClientUserProfileViewSet, basename="profile"
 )
-default_router.register("books", BookModelView, basename="books")
+default_router.register(
+    "mybooks", BorrowedBookViewSet, basename="borrowed-books"
+)
+default_router.register("books", BookViewSet, basename="books")
 
 
 urlpatterns = [
