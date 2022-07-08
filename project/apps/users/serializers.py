@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from apps.users.models import Client
+from apps.users.models import Author
 from apps.users.utils.db_utils import (
     create_base_user_instance,
     create_client_user_instance,
@@ -90,5 +91,22 @@ class ClientUserUpdateSerializer(serializers.ModelSerializer):
         base_user = self.context["request"].user
         return is_taken_username_and_not_same_with_instance_username(
             value, base_user
+        )
+
+
+class AuthorUserRetrieveSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source="user.email")
+    username = serializers.CharField(source="user.username", max_length=100)
+    full_name = serializers.CharField(source="user.full_name", max_length=150)
+
+    class Meta:
+        model = Author
+        fields = (
+            "email", 
+            "username", 
+            "full_name", 
+            "photo", 
+            "country", 
+            "bio"
         )
     

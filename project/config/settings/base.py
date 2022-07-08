@@ -13,6 +13,7 @@ EXTERNAL_PACKAGES = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "debug_toolbar",
 ]
 
 INSTALLED_APPS = [
@@ -32,6 +33,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -86,6 +89,10 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": os.getenv("TOKEN_SECRET_KEY"),
 }
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]  # debug toolbar IPS
 
 
 LANGUAGE_CODE = 'en-us'
