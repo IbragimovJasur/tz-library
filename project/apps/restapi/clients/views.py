@@ -1,15 +1,10 @@
-from django.http import Http404
-
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
 
-from apps.books.models import (
-    Book,
-    BorrowedBook,
-)
+from apps.books.models import BorrowedBook
 from apps.books.serializers import (
     BookListSerializer,
     BookRetrieveSerializer,
@@ -22,14 +17,20 @@ from apps.restapi.clients.permissions import (
     IsClientUser,
     IsUnAuthenticatedUser,
 )
-from apps.restapi.clients.utils.db_utils import (
+from apps.restapi.clients.utils.orm_utils import (
+    get_all_author_users,
+    get_all_books,
     get_all_books_client_user_borrowed,
+    get_book_instance_using_pk,
     get_client_users_all_finished_borrowed_books,
     get_client_users_all_still_reading_borrowed_books,
     get_client_user_borrowed_book_using_pk,
+    search_author_using_full_name,
+    search_book_using_name,
 )
 from apps.restapi.utils import get_access_refresh_token_for_user
 from apps.users.serializers import (
+    AuthorUserRetrieveSerializer,
     ClientUserCreateSerializer,
     ClientUserUpdateSerializer,
 )
@@ -63,10 +64,7 @@ class ClientUserProfileViewSet(
         if self.request.method == "POST":
             return (IsUnAuthenticatedUser(), )
 
-        return (
-            IsAuthenticated(),
-            IsClientUser(),
-        )
+        return (IsAuthenticated(), IsClientUser(), )
 
     def get_serializer_class(self):
         if self.request.method == "PUT" or self.request.method == "PATCH":
@@ -98,6 +96,7 @@ class BookViewSet(
     viewsets.GenericViewSet
 ):
     """For handling GET requests for books model by client users"""
+    
     permission_classes = (IsAuthenticated, IsClientUser)
     http_method_names = ("get", )
 
@@ -108,27 +107,22 @@ class BookViewSet(
         return BookRetrieveSerializer  # for retrieve method
 
     def get_queryset(self):
-        query_param = self.request.query_params.get("name")
+        query_param = self.request.query_params.get("name", False)
         if query_param:
-            books = Book.objects.filter(name__icontains=query_param)
-            return books
-
-        return Book.objects.all()
+            return search_book_using_name(query_param)
+        return get_all_books()
 
     def get_object(self):
-        try:
-            book = Book.objects.prefetch_related(
-                "authors"
-            ).get(pk=self.kwargs.get("pk"))
-            return book
-
-        except Book.DoesNotExist:
-            raise Http404   # when pk matching object doesn't exist
+        return get_book_instance_using_pk(self.kwargs.get("pk"))
 
 
 class BorrowedBookViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, IsClientUser)
+    """
+    For handling GET/PUT/PATCH/DELETE requests for BorrowedBook 
+    model related endpoint of client app
+    """
 
+    permission_classes = (IsAuthenticated, IsClientUser)
     http_method_names = ("get", "post", "put", "patch", "delete")
 
     def get_serializer_class(self):
@@ -143,7 +137,6 @@ class BorrowedBookViewSet(viewsets.ModelViewSet):
             if query_param == FINISHED_BOOK_STATUS:
                 # in case there's a query request for finished borrowed books
                 return BorrowedFinishedBookListSerializer
-
             return BorrowedBookSerializer
 
     def get_queryset(self):
@@ -167,6 +160,24 @@ class BorrowedBookViewSet(viewsets.ModelViewSet):
         return get_client_user_borrowed_book_using_pk(
             self.request.user.client, self.kwargs.get("pk")
         )
-        
+
     def perform_create(self, serializer):
         serializer.save(client=self.request.user.client)
+
+
+class AuthorViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    """
+    For handling GET requests for Author model related endpoints of client app
+    """
+    permission_classes = (IsAuthenticated, IsClientUser)
+    http_method_names = ("get", "post", "put", "patch", "delete")
+    serializer_class = AuthorUserRetrieveSerializer
+
+    def get_queryset(self):
+        query_param = self.request.query_params.get("name", False)
+        if query_param:
+            return search_author_using_full_name(query_param)
+        return get_all_author_users()
