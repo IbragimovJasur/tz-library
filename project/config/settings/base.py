@@ -4,16 +4,19 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 
+load_dotenv()
+
 PROJECT_APPS = [
-    'apps.users',
     'apps.books',
+    'apps.users',
 ]
 
 EXTERNAL_PACKAGES = [
+    "debug_toolbar",
+    "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
-    "debug_toolbar",
 ]
 
 INSTALLED_APPS = [

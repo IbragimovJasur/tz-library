@@ -12,6 +12,7 @@ def get_author_users_all_books(author_user: Author):
 
 
 def get_author_users_book_using_pk(author_user: Author, pk: int):
+    """Returns author user's book corresponding to pk value"""
     try:
         author_users_book = author_user.books.prefetch_related(
             Prefetch(

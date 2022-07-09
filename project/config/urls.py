@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from config.drf_yasg import urlpatterns_restapi
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +27,7 @@ urlpatterns = [
 urlpatterns = (
     urlpatterns
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + urlpatterns_restapi   # swagger url
 )
 
 
