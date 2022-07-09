@@ -16,7 +16,9 @@ class Book(models.Model):
     )
     name = models.CharField(
         verbose_name=_("Name of the book"),
-        max_length=250
+        max_length=250,
+        unique=True,
+        error_messages={"unique": "Book with entered username already exists"}
     )
     image = models.ImageField(
         verbose_name=_("Book image"),

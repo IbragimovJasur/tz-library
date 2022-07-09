@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.db.models import Prefetch
 
 from apps.books.models import (
     Book,
@@ -34,7 +35,12 @@ def get_all_books_client_user_borrowed(client: Client):
 def get_book_instance_using_pk(pk: int):
     """Retrieves book instance based on pk"""
     try:
-        book = Book.objects.prefetch_related("authors").get(pk=pk)
+        book = Book.objects.prefetch_related(
+            Prefetch(
+                "authors", queryset=Author.objects.select_related("user")
+            )
+        ).get(pk=pk)
+
         return book
 
     except Book.DoesNotExist:
@@ -49,7 +55,7 @@ def get_client_user_borrowed_book_using_pk(client: Client, pk: int):
             "book"
         ).get(pk=pk)
         return client_user_borrowed_book
-    
+
     except BorrowedBook.DoesNotExist:
         raise Http404
 
