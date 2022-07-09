@@ -2,7 +2,7 @@ from rest_framework.routers import Route
 from rest_framework.routers import SimpleRouter
 
 
-class ClientUserProfileRouter(SimpleRouter):
+class AuthorClientUsersProfileRouter(SimpleRouter):
     """A router for performing CRUD in Client user model"""
 
     routes = [

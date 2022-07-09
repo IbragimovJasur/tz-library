@@ -3,17 +3,19 @@ from django.urls import path
 
 from rest_framework.routers import SimpleRouter
 
-from apps.restapi.clients.routers import ClientUserProfileRouter
 from apps.restapi.clients.views import (
     AuthorViewSet,
     BookViewSet,
     BorrowedBookViewSet,
     ClientUserProfileViewSet,
 )
+from apps.restapi.routers import AuthorClientUsersProfileRouter
 
 
 app_name = "clients"
-client_user_profile_router = ClientUserProfileRouter(trailing_slash=True)
+client_user_profile_router = AuthorClientUsersProfileRouter(
+    trailing_slash=True
+)
 default_router = SimpleRouter()
 
 # registering routes

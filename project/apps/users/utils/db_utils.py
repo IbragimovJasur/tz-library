@@ -16,12 +16,14 @@ def create_base_user_instance(base_user_instance_create_data) -> BaseUser:
     return base_user_instance
 
 
-def create_client_user_instance(
-    base_user_instance: BaseUser, validated_data_without_base_user_fields
-) -> Client:
-    """Function for creating Client user model instance"""
+def create_client_or_author_user_instance(
+    model: Client | Author, 
+    base_user_instance: BaseUser, 
+    validated_data_without_base_user_fields
+) -> Client | Author:
+    """Function for creating Client or Author user model instance"""
 
-    client_user_instance = Client.objects.create(
+    client_user_instance = model.objects.create(
         user=base_user_instance, 
         **validated_data_without_base_user_fields
     )
@@ -39,14 +41,12 @@ def update_base_user_instance(
 
 
 def update_client_or_author_user_instance(
-    client_user_instance, validated_data: dict
+    client_or_author_user_instance: Client | Author, validated_data: dict
 ) -> Client | Author:
     """For updating Client or Author user instance"""
 
     for field_name, field_value in validated_data.items():
-        if field_name != "user":
-            setattr(client_user_instance, field_name, field_value)
-    client_user_instance.save()
-
-    return client_user_instance
+        setattr(client_or_author_user_instance, field_name, field_value)
+    client_or_author_user_instance.save()
     
+    return client_or_author_user_instance
