@@ -138,3 +138,6 @@ media
 0002*
 0003*
 0004*
+
+# Postgres
+postgres-data

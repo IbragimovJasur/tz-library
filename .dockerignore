@@ -1,0 +1,14 @@
+# VS Code
+.vscode
+
+# Git
+.git/
+.gitignore
+
+# Python
+*.pyc
+__pycache__
+.venv
+
+# DB
+db.sqlite3

@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:14-alpine3.16
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  project:
+    build:
+      context: .
+    restart: always
+    volumes:
+      - static:/static
+      - media:/media
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+    depends_on:
+      - db
+
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - project
+    ports:
+      - 80:80
+    env_file:
+      - .env
+    environment:
+      - APP_HOST=${APP_HOST}
+      - APP_PORT=${APP_PORT}
+      - LISTEN_PORT=${LISTEN_PORT}
+    volumes:
+      - static:/static
+      - media:/media
+
+volumes:
+  postgres-data:
+  static:
+  media:
